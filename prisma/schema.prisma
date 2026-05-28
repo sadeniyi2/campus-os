@@ -1,0 +1,488 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  STUDENT
+  LECTURER
+  COURSE_REP
+  ADMIN
+  SUPER_ADMIN
+}
+
+enum ClearanceStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  NOT_REQUIRED
+}
+
+enum AnnouncementCategory {
+  ACADEMIC
+  EXAMS
+  URGENT
+  DEPARTMENT
+  FACULTY
+  HOSTEL
+  BURSARY
+  EVENTS
+}
+
+enum TimetableType {
+  CLASS
+  EXAM
+}
+
+model User {
+  id               String    @id @default(cuid())
+  email            String    @unique
+  name             String
+  avatarUrl        String?
+  role             Role      @default(STUDENT)
+  emailVerified    Boolean   @default(false)
+  twoFactorEnabled Boolean   @default(false)
+  lastLoginAt      DateTime?
+  deletedAt        DateTime?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+
+  student                Student?
+  lecturer               Lecturer?
+  sessions               Session[]
+  notifications          Notification[]
+  auditLogs              AuditLog[]
+  aiChats                AIChat[]
+  announcementReactions  AnnouncementReaction[]
+  announcementComments   AnnouncementComment[]
+  createdAnnouncements   Announcement[]         @relation("AnnouncementAuthor")
+  clearanceRequests      ClearanceRequest[]
+  clearanceApprovals     ClearanceApproval[]
+
+  @@index([email])
+  @@index([role])
+  @@map("users")
+}
+
+model Student {
+  id           String   @id @default(cuid())
+  userId       String   @unique
+  studentId    String   @unique
+  departmentId String
+  level        Int
+  cgpa         Float    @default(0)
+  semester     Int      @default(1)
+  session      String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  user                User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  department          Department          @relation(fields: [departmentId], references: [id])
+  enrollments         Enrollment[]
+  submissions         Submission[]
+  attendanceSummaries AttendanceSummary[]
+
+  @@index([studentId])
+  @@index([departmentId])
+  @@map("students")
+}
+
+model Lecturer {
+  id           String   @id @default(cuid())
+  userId       String   @unique
+  staffId      String   @unique
+  departmentId String
+  title        String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  department    Department     @relation(fields: [departmentId], references: [id])
+  courses       Course[]
+  announcements Announcement[] @relation("LecturerAnnouncements")
+
+  @@index([staffId])
+  @@map("lecturers")
+}
+
+model Faculty {
+  id          String       @id @default(cuid())
+  name        String       @unique
+  code        String       @unique
+  deletedAt   DateTime?
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  departments Department[]
+
+  @@map("faculties")
+}
+
+model Department {
+  id        String    @id @default(cuid())
+  name      String
+  code      String    @unique
+  facultyId String
+  deletedAt DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  faculty    Faculty     @relation(fields: [facultyId], references: [id])
+  students   Student[]
+  lecturers  Lecturer[]
+  courses    Course[]
+  timetables Timetable[]
+
+  @@index([facultyId])
+  @@map("departments")
+}
+
+model Course {
+  id           String    @id @default(cuid())
+  code         String    @unique
+  title        String
+  description  String?
+  units        Int
+  departmentId String
+  lecturerId   String?
+  semester     Int
+  level        Int
+  deletedAt    DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  department  Department       @relation(fields: [departmentId], references: [id])
+  lecturer    Lecturer?        @relation(fields: [lecturerId], references: [id])
+  enrollments Enrollment[]
+  assignments Assignment[]
+  materials   CourseMaterial[]
+  timetables  Timetable[]
+
+  @@index([departmentId])
+  @@index([lecturerId])
+  @@map("courses")
+}
+
+model Enrollment {
+  id        String   @id @default(cuid())
+  studentId String
+  courseId  String
+  grade     Float?
+  semester  Int
+  session   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  student Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  course  Course  @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  @@unique([studentId, courseId, session])
+  @@index([studentId])
+  @@index([courseId])
+  @@map("enrollments")
+}
+
+model Assignment {
+  id          String    @id @default(cuid())
+  title       String
+  description String
+  courseId    String
+  dueDate     DateTime
+  maxScore    Float     @default(100)
+  attachments Json      @default("[]")
+  deletedAt   DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  course      Course       @relation(fields: [courseId], references: [id])
+  submissions Submission[]
+
+  @@index([courseId])
+  @@map("assignments")
+}
+
+model Submission {
+  id           String    @id @default(cuid())
+  assignmentId String
+  studentId    String
+  content      String?
+  attachments  Json      @default("[]")
+  score        Float?
+  feedback     String?
+  submittedAt  DateTime  @default(now())
+  gradedAt     DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  assignment Assignment @relation(fields: [assignmentId], references: [id])
+  student    Student    @relation(fields: [studentId], references: [id])
+
+  @@unique([assignmentId, studentId])
+  @@index([assignmentId])
+  @@index([studentId])
+  @@map("submissions")
+}
+
+model CourseMaterial {
+  id        String    @id @default(cuid())
+  courseId  String
+  title     String
+  type      String
+  url       String
+  size      Int?
+  deletedAt DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  course Course @relation(fields: [courseId], references: [id])
+
+  @@index([courseId])
+  @@map("course_materials")
+}
+
+model Announcement {
+  id           String               @id @default(cuid())
+  title        String
+  content      String
+  authorId     String
+  lecturerId   String?
+  category     AnnouncementCategory @default(ACADEMIC)
+  isPinned     Boolean              @default(false)
+  isUrgent     Boolean              @default(false)
+  isScheduled  Boolean              @default(false)
+  scheduledAt  DateTime?
+  attachments  Json                 @default("[]")
+  imageUrl     String?
+  targetRoles  Role[]
+  departmentId String?
+  deletedAt    DateTime?
+  createdAt    DateTime             @default(now())
+  updatedAt    DateTime             @updatedAt
+
+  author    User                   @relation("AnnouncementAuthor", fields: [authorId], references: [id])
+  lecturer  Lecturer?              @relation("LecturerAnnouncements", fields: [lecturerId], references: [id])
+  reactions AnnouncementReaction[]
+  comments  AnnouncementComment[]
+
+  @@index([authorId])
+  @@index([category])
+  @@index([createdAt])
+  @@map("announcements")
+}
+
+model AnnouncementReaction {
+  id             String   @id @default(cuid())
+  announcementId String
+  userId         String
+  type           String
+  createdAt      DateTime @default(now())
+
+  announcement Announcement @relation(fields: [announcementId], references: [id], onDelete: Cascade)
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([announcementId, userId, type])
+  @@index([announcementId])
+  @@map("announcement_reactions")
+}
+
+model AnnouncementComment {
+  id             String    @id @default(cuid())
+  announcementId String
+  userId         String
+  content        String
+  deletedAt      DateTime?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  announcement Announcement @relation(fields: [announcementId], references: [id], onDelete: Cascade)
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([announcementId])
+  @@map("announcement_comments")
+}
+
+model Timetable {
+  id           String        @id @default(cuid())
+  title        String
+  type         TimetableType @default(CLASS)
+  departmentId String
+  courseId     String?
+  semester     Int
+  session      String
+  fileUrl      String
+  fileType     String
+  isPinned     Boolean       @default(false)
+  uploadedBy   String
+  deletedAt    DateTime?
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+
+  department Department         @relation(fields: [departmentId], references: [id])
+  course     Course?            @relation(fields: [courseId], references: [id])
+  versions   TimetableVersion[]
+
+  @@index([departmentId])
+  @@index([semester])
+  @@map("timetables")
+}
+
+model TimetableVersion {
+  id          String   @id @default(cuid())
+  timetableId String
+  version     Int
+  fileUrl     String
+  uploadedBy  String
+  createdAt   DateTime @default(now())
+
+  timetable Timetable @relation(fields: [timetableId], references: [id], onDelete: Cascade)
+
+  @@index([timetableId])
+  @@map("timetable_versions")
+}
+
+model ClearanceRequest {
+  id             String          @id @default(cuid())
+  userId         String
+  semester       Int
+  session        String
+  status         ClearanceStatus @default(PENDING)
+  qrCode         String?
+  certificateUrl String?
+  submittedAt    DateTime        @default(now())
+  completedAt    DateTime?
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+
+  user      User                @relation(fields: [userId], references: [id])
+  approvals ClearanceApproval[]
+
+  @@unique([userId, semester, session])
+  @@index([userId])
+  @@index([status])
+  @@map("clearance_requests")
+}
+
+model ClearanceApproval {
+  id                 String          @id @default(cuid())
+  clearanceRequestId String
+  approverId         String
+  module             String
+  status             ClearanceStatus @default(PENDING)
+  notes              String?
+  approvedAt         DateTime?
+  createdAt          DateTime        @default(now())
+  updatedAt          DateTime        @updatedAt
+
+  clearanceRequest ClearanceRequest @relation(fields: [clearanceRequestId], references: [id])
+  approver         User             @relation(fields: [approverId], references: [id])
+
+  @@index([clearanceRequestId])
+  @@index([approverId])
+  @@map("clearance_approvals")
+}
+
+model AttendanceSummary {
+  id           String   @id @default(cuid())
+  studentId    String
+  courseCode   String
+  totalClasses Int      @default(0)
+  attended     Int      @default(0)
+  percentage   Float    @default(0)
+  lastSyncedAt DateTime @default(now())
+  semester     Int
+  session      String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  student Student @relation(fields: [studentId], references: [id])
+
+  @@unique([studentId, courseCode, semester, session])
+  @@index([studentId])
+  @@map("attendance_summaries")
+}
+
+model AttendanceSyncCache {
+  id        String   @id @default(cuid())
+  studentId String
+  rawData   Json
+  syncedAt  DateTime @default(now())
+  source    String   @default("geomark")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([studentId])
+  @@map("attendance_sync_cache")
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  title     String
+  message   String
+  type      String
+  isRead    Boolean  @default(false)
+  isUrgent  Boolean  @default(false)
+  link      String?
+  metadata  Json?
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([isRead])
+  @@index([createdAt])
+  @@map("notifications")
+}
+
+model AIChat {
+  id        String   @id @default(cuid())
+  userId    String
+  courseId  String?
+  title     String?
+  messages  Json     @default("[]")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("ai_chats")
+}
+
+model Session {
+  id         String   @id @default(cuid())
+  userId     String
+  token      String   @unique
+  deviceInfo Json?
+  ipAddress  String?
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([token])
+  @@map("sessions")
+}
+
+model AuditLog {
+  id         String   @id @default(cuid())
+  userId     String
+  action     String
+  resource   String
+  resourceId String?
+  metadata   Json?
+  ipAddress  String?
+  createdAt  DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([action])
+  @@index([createdAt])
+  @@map("audit_logs")
+}
