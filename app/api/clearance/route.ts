@@ -105,8 +105,8 @@ export async function PATCH(request: NextRequest) {
       where: { clearanceRequestId: approval.clearanceRequestId },
     });
 
-    const allApproved = allApprovals.every((a) => a.status === "APPROVED" || a.status === "NOT_REQUIRED");
-    const anyRejected = allApprovals.some((a) => a.status === "REJECTED");
+    const allApproved = allApprovals.every((a: { status: string }) => a.status === "APPROVED" || a.status === "NOT_REQUIRED");
+    const anyRejected = allApprovals.some((a: { status: string }) => a.status === "REJECTED");
 
     await prisma.clearanceRequest.update({
       where: { id: approval.clearanceRequestId },
