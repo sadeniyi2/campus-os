@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, Suspense } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { GraduationCap, Mail, Lock, Eye, EyeOff } from "lucide-react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { GraduationCap, Mail, Lock, Eye, EyeOff, CheckCircle } from "lucide-react";
 
 function GoogleIcon() {
   return (
@@ -21,6 +21,17 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
 import { createClient } from "@/lib/supabase/client";
 import { cn } from "@/lib/utils";
+
+function ResetSuccessBanner() {
+  const searchParams = useSearchParams();
+  if (searchParams.get("reset") !== "success") return null;
+  return (
+    <div className="flex items-center gap-2 p-3 rounded-lg bg-emerald-50 dark:bg-emerald-950 border border-emerald-200 dark:border-emerald-800 text-emerald-700 dark:text-emerald-300 text-sm mb-6">
+      <CheckCircle className="size-4 shrink-0" />
+      Password reset successfully. Sign in with your new password.
+    </div>
+  );
+}
 
 export default function LoginPage() {
   const router = useRouter();
@@ -107,6 +118,10 @@ export default function LoginPage() {
             <h2 className="text-2xl font-bold">Welcome back</h2>
             <p className="text-muted-foreground mt-1">Sign in to your account to continue</p>
           </div>
+
+          <Suspense fallback={null}>
+            <ResetSuccessBanner />
+          </Suspense>
 
           <Button
             variant="outline"
