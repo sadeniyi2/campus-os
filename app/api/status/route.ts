@@ -10,12 +10,25 @@ export async function GET() {
   const checks: Record<string, { status: "ok" | "degraded" | "down"; latencyMs?: number; message?: string }> = {};
 
   // Database check
-  try {
-    const dbStart = Date.now();
-    await prisma.$queryRaw`SELECT 1`;
-    checks.database = { status: "ok", latencyMs: Date.now() - dbStart };
-  } catch {
-    checks.database = { status: "down", message: "Cannot reach database" };
+  if (!process.env.DATABASE_URL) {
+    checks.database = { status: "down", message: "DATABASE_URL environment variable not set in Vercel" };
+  } else {
+    try {
+      const dbStart = Date.now();
+      await prisma.$queryRaw`SELECT 1`;
+      checks.database = { status: "ok", latencyMs: Date.now() - dbStart };
+    } catch (err) {
+      const raw = err instanceof Error ? err.message : String(err);
+      // Surface a short, actionable message
+      const msg = raw.includes("Connection refused") || raw.includes("ECONNREFUSED")
+        ? "Connection refused — Supabase project may be paused. Resume it at supabase.com/dashboard."
+        : raw.includes("password authentication") || raw.includes("auth")
+        ? "Authentication failed — check DATABASE_URL password in Vercel env vars."
+        : raw.includes("does not exist") || raw.includes("ENOTFOUND")
+        ? "Host not found — check DATABASE_URL hostname in Vercel env vars."
+        : raw.slice(0, 140);
+      checks.database = { status: "down", message: msg };
+    }
   }
 
   // AI service check — actually test a live Gemini call

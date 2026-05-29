@@ -155,13 +155,13 @@ export default function StatusPage() {
               const svc = data?.services[key as keyof typeof data.services];
               const status: "ok" | "degraded" | "down" | "loading" = loading ? "loading" : svc?.status ?? "down";
               return (
-                <div key={key} className="flex items-center gap-4 p-4 rounded-xl border border-border bg-card">
-                  <div className="flex items-center justify-center size-10 rounded-xl bg-muted shrink-0">
+                <div key={key} className={`flex items-start gap-4 p-4 rounded-xl border bg-card ${status === "down" ? "border-red-200 dark:border-red-900" : status === "degraded" ? "border-amber-200 dark:border-amber-900" : "border-border"}`}>
+                  <div className="flex items-center justify-center size-10 rounded-xl bg-muted shrink-0 mt-0.5">
                     <Icon className="size-5 text-muted-foreground" />
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="font-medium text-sm">{meta.label}</p>
-                    <p className="text-xs text-muted-foreground">
+                    <p className={`text-xs mt-0.5 ${status === "down" ? "text-red-600 dark:text-red-400" : status === "degraded" ? "text-amber-600 dark:text-amber-400" : "text-muted-foreground"}`}>
                       {svc?.message ?? meta.desc}
                       {svc?.latencyMs !== undefined && ` · ${svc.latencyMs}ms`}
                     </p>
