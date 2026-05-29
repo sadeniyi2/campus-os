@@ -110,14 +110,14 @@ export default function StatusPage() {
         {/* Overall status banner */}
         <div className={`rounded-2xl border p-8 text-center transition-colors ${
           overall === "loading" ? "border-border bg-muted/30"
-          : overall === "operational" || overall === "ok" ? "border-emerald-200 bg-emerald-50 dark:border-emerald-800 dark:bg-emerald-950/20"
+          : overall === "operational" ? "border-emerald-200 bg-emerald-50 dark:border-emerald-800 dark:bg-emerald-950/20"
           : overall === "degraded" ? "border-amber-200 bg-amber-50 dark:border-amber-800 dark:bg-amber-950/20"
           : "border-red-200 bg-red-50 dark:border-red-800 dark:bg-red-950/20"
         }`}>
           <div className="flex items-center justify-center mb-4">
             {overall === "loading" ? (
               <div className="size-12 rounded-full border-4 border-muted-foreground/20 border-t-primary animate-spin" />
-            ) : overall === "operational" || overall === "ok" ? (
+            ) : overall === "operational" ? (
               <CheckCircle className="size-12 text-emerald-500" />
             ) : overall === "degraded" ? (
               <AlertTriangle className="size-12 text-amber-500" />
@@ -127,7 +127,7 @@ export default function StatusPage() {
           </div>
           <h1 className="text-2xl font-bold mb-2">
             {overall === "loading" ? "Checking system status..."
-            : overall === "operational" || overall === "ok" ? "All Systems Operational"
+            : overall === "operational" ? "All Systems Operational"
             : overall === "degraded" ? "Partial System Degradation"
             : "Service Disruption"}
           </h1>
