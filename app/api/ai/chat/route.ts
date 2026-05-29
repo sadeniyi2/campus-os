@@ -16,11 +16,14 @@ export async function POST(request: NextRequest) {
 
     const model = getModel();
 
-    // Split history from the last user message
-    const history = messages.slice(0, -1).map((m: { role: string; content: string }) => ({
+    // Build history: exclude the last message (sent separately) and any leading
+    // assistant/model messages — Gemini requires history to start with 'user'.
+    const rawHistory = messages.slice(0, -1).map((m: { role: string; content: string }) => ({
       role: m.role === "assistant" ? "model" : "user",
       parts: [{ text: m.content }],
     }));
+    const firstUserIdx = rawHistory.findIndex((m) => m.role === "user");
+    const history = firstUserIdx >= 0 ? rawHistory.slice(firstUserIdx) : [];
 
     const lastMessage = messages[messages.length - 1].content as string;
 
