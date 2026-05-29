@@ -146,15 +146,22 @@ export function AIChat() {
         }
       }
     } catch (err) {
-      const isApiError = err instanceof Error && err.message !== "Failed to get response";
+      const msg = err instanceof Error ? err.message : "";
+      const retryMatch = msg.match(/retry in (\d+)/i);
+      const userMessage =
+        msg.includes("429") || msg.includes("quota") || msg.includes("Too Many Requests")
+          ? `AI rate limit reached.${retryMatch ? ` Please wait ${retryMatch[1]} seconds and try again.` : " Please try again in a moment."}`
+          : msg.includes("400") || msg.includes("Bad Request")
+          ? "The AI request was invalid. Please try rephrasing your message."
+          : msg
+          ? `AI error: ${msg.slice(0, 120)}`
+          : "The AI service is temporarily unavailable. Please check that GEMINI_API_KEY is set correctly in Vercel.";
       setMessages((prev) => [
         ...prev,
         {
           id: (Date.now() + 1).toString(),
           role: "assistant",
-          content: isApiError
-            ? `Error: ${(err as Error).message}`
-            : "The AI service is temporarily unavailable. This usually means the GEMINI_API_KEY environment variable is missing or invalid. Please contact your administrator.",
+          content: userMessage,
           createdAt: new Date().toISOString(),
         },
       ]);
