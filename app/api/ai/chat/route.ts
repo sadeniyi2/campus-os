@@ -28,7 +28,7 @@ export async function POST(request: NextRequest) {
     const lastMessage = messages[messages.length - 1].content as string;
 
     const chat = model.startChat({
-      systemInstruction: { parts: [{ text: systemPrompt }] },
+      systemInstruction: { role: "user", parts: [{ text: systemPrompt }] },
       history,
     });
 
