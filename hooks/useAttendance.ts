@@ -2,7 +2,7 @@
 
 import { useCallback } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { GEOMARK_URL, MOCK_ATTENDANCE } from "@/lib/constants";
+import { GEOMARK_URL } from "@/lib/constants";
 
 async function syncAttendance() {
   const res = await fetch("/api/attendance/sync", { method: "POST" });
@@ -16,16 +16,9 @@ export function useAttendance() {
   const query = useQuery({
     queryKey: ["attendance"],
     queryFn: async () => {
-      // Mock data returned since GeoMark is the external system
-      return {
-        data: MOCK_ATTENDANCE,
-        total: MOCK_ATTENDANCE.length,
-        averageAttendance: Math.round(
-          MOCK_ATTENDANCE.reduce((sum, c) => sum + c.percentage, 0) / MOCK_ATTENDANCE.length
-        ),
-        atRisk: MOCK_ATTENDANCE.filter((c) => c.percentage < 75).length,
-        geomarkUrl: GEOMARK_URL,
-      };
+      const res = await fetch("/api/attendance/sync");
+      if (!res.ok) return { data: [], total: 0, averageAttendance: 0, atRisk: 0 };
+      return res.json();
     },
     staleTime: 10 * 60_000,
   });

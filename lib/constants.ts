@@ -32,51 +32,6 @@ export const ROLE_LABELS: Record<string, string> = {
   SUPER_ADMIN: "Super Administrator",
 };
 
-export const MOCK_ATTENDANCE = [
-  { courseCode: "CSC 301", courseName: "Data Structures & Algorithms", totalClasses: 24, attended: 22, percentage: 91.7 },
-  { courseCode: "CSC 305", courseName: "Operating Systems", totalClasses: 20, attended: 17, percentage: 85.0 },
-  { courseCode: "CSC 307", courseName: "Computer Networks", totalClasses: 22, attended: 15, percentage: 68.2 },
-  { courseCode: "MTH 301", courseName: "Numerical Methods", totalClasses: 18, attended: 10, percentage: 55.6 },
-  { courseCode: "ENG 301", courseName: "Technical Writing", totalClasses: 16, attended: 15, percentage: 93.8 },
-  { courseCode: "CSC 309", courseName: "Software Engineering", totalClasses: 20, attended: 18, percentage: 90.0 },
-];
-
-export const MOCK_ANNOUNCEMENTS = [
-  {
-    id: "1",
-    title: "Mid-Semester Examination Timetable Released",
-    content: "The mid-semester examination timetable for the 2024/2025 academic session has been released. Students are advised to check the timetable carefully and report any clashes to their course representatives immediately.",
-    category: "EXAMS" as const,
-    isPinned: true,
-    isUrgent: true,
-    author: { name: "Academic Office", avatarUrl: null },
-    createdAt: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
-    _count: { reactions: 48, comments: 12 },
-  },
-  {
-    id: "2",
-    title: "Bursary Clearance Deadline Extended",
-    content: "The deadline for bursary clearance has been extended to January 31st, 2025. All students with outstanding fees are advised to settle their accounts before this date to avoid being barred from examinations.",
-    category: "BURSARY" as const,
-    isPinned: false,
-    isUrgent: true,
-    author: { name: "Bursary Office", avatarUrl: null },
-    createdAt: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(),
-    _count: { reactions: 32, comments: 8 },
-  },
-  {
-    id: "3",
-    title: "Department Seminar: AI in African Agriculture",
-    content: "The Department of Computer Science invites all students and staff to attend the departmental seminar themed 'Artificial Intelligence Applications in African Agriculture'. The seminar holds on Friday, 5th February 2025 at 10:00 AM in the Faculty Auditorium.",
-    category: "DEPARTMENT" as const,
-    isPinned: false,
-    isUrgent: false,
-    author: { name: "Dept. of Computer Science", avatarUrl: null },
-    createdAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
-    _count: { reactions: 15, comments: 4 },
-  },
-];
-
 export const NAV_ITEMS_STUDENT = [
   { label: "Dashboard", href: "/student", icon: "LayoutDashboard" },
   { label: "My Courses", href: "/student/courses", icon: "BookOpen" },

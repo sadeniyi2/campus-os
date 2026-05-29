@@ -1,17 +1,10 @@
-import { Users, Building2, Award, Shield, BarChart2, Activity } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { Users, Building2, Award, Activity } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
 import { StatCard } from "@/components/dashboard/StatCard";
 import { ClearanceApproval } from "@/components/clearance/ClearanceApproval";
 import Link from "next/link";
-
-const RECENT_ACTIVITY = [
-  { action: "User registered", user: "Amina Yusuf", role: "Student", time: "2 min ago" },
-  { action: "Clearance approved", user: "Admin Smith", role: "Admin", time: "15 min ago" },
-  { action: "Timetable uploaded", user: "Course Rep A", role: "Course Rep", time: "1 hour ago" },
-  { action: "Announcement posted", user: "Dr. Okafor", role: "Lecturer", time: "2 hours ago" },
-];
+import { Button } from "@/components/ui/button";
+import { BarChart2, Shield } from "lucide-react";
 
 export default function AdminDashboard() {
   return (
@@ -22,10 +15,10 @@ export default function AdminDashboard() {
       </div>
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <StatCard label="Total Users" value="1,247" change={12.5} changeLabel="this month" icon={<Users className="size-5" />} />
-        <StatCard label="Active Today" value="384" icon={<Activity className="size-5" />} />
-        <StatCard label="Pending Clearances" value="48" icon={<Award className="size-5" />} />
-        <StatCard label="Departments" value="18" icon={<Building2 className="size-5" />} />
+        <StatCard label="Total Users" value="0" icon={<Users className="size-5" />} />
+        <StatCard label="Active Today" value="0" icon={<Activity className="size-5" />} />
+        <StatCard label="Pending Clearances" value="0" icon={<Award className="size-5" />} />
+        <StatCard label="Departments" value="0" icon={<Building2 className="size-5" />} />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -41,19 +34,10 @@ export default function AdminDashboard() {
 
         <div className="space-y-4">
           <h2 className="font-semibold">Recent Activity</h2>
-          <div className="space-y-3">
-            {RECENT_ACTIVITY.map((a, i) => (
-              <div key={i} className="flex items-start gap-3 p-3 rounded-xl border border-border">
-                <div className="flex items-center justify-center size-8 rounded-full bg-primary/10 shrink-0">
-                  <Activity className="size-3.5 text-primary" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-xs font-medium">{a.action}</p>
-                  <p className="text-xs text-muted-foreground">{a.user} · <Badge variant="secondary" className="text-xs">{a.role}</Badge></p>
-                  <p className="text-xs text-muted-foreground mt-0.5">{a.time}</p>
-                </div>
-              </div>
-            ))}
+          <div className="flex flex-col items-center justify-center py-10 text-center border border-border rounded-xl">
+            <Activity className="size-8 text-muted-foreground opacity-30 mb-2" />
+            <p className="text-sm font-medium text-muted-foreground">No activity yet</p>
+            <p className="text-xs text-muted-foreground mt-1">System actions will appear here</p>
           </div>
 
           <div className="space-y-2">

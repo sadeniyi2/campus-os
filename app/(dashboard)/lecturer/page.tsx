@@ -1,25 +1,18 @@
 "use client";
 
 import { BookOpen, Users, FileText, BarChart2, ExternalLink, Megaphone, Plus } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { StatCard } from "@/components/dashboard/StatCard";
 import { GEOMARK_URL } from "@/lib/constants";
 import Link from "next/link";
-
-const COURSES = [
-  { code: "CSC 301", title: "Data Structures & Algorithms", enrolled: 87, level: 300, assignments: 3 },
-  { code: "CSC 309", title: "Software Engineering", enrolled: 92, level: 300, assignments: 2 },
-  { code: "CSC 401", title: "Artificial Intelligence", enrolled: 64, level: 400, assignments: 4 },
-];
 
 export default function LecturerDashboard() {
   return (
     <div className="space-y-6 animate-fade-in">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Good morning, Dr. Okafor 👋</h1>
+          <h1 className="text-2xl font-bold tracking-tight">Good morning 👋</h1>
           <p className="text-sm text-muted-foreground mt-1">Manage your courses, assignments, and student performance.</p>
         </div>
         <div className="flex gap-2">
@@ -41,10 +34,10 @@ export default function LecturerDashboard() {
       </div>
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <StatCard label="My Courses" value="3" icon={<BookOpen className="size-5" />} />
-        <StatCard label="Total Students" value="243" change={5.2} changeLabel="vs last sem" icon={<Users className="size-5" />} />
-        <StatCard label="Pending Grading" value="24" icon={<FileText className="size-5" />} />
-        <StatCard label="Avg. Performance" value="68%" change={-2.1} changeLabel="this semester" icon={<BarChart2 className="size-5" />} />
+        <StatCard label="My Courses" value="0" icon={<BookOpen className="size-5" />} />
+        <StatCard label="Total Students" value="0" icon={<Users className="size-5" />} />
+        <StatCard label="Pending Grading" value="0" icon={<FileText className="size-5" />} />
+        <StatCard label="Avg. Performance" value="—" icon={<BarChart2 className="size-5" />} />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -55,26 +48,11 @@ export default function LecturerDashboard() {
               <Button variant="ghost" size="sm" className="text-xs">View all</Button>
             </Link>
           </div>
-          {COURSES.map((course) => (
-            <Card key={course.code} className="card-hover">
-              <CardContent className="p-4">
-                <div className="flex items-start justify-between gap-3">
-                  <div>
-                    <div className="flex items-center gap-2 mb-1">
-                      <Badge variant="outline" className="text-xs">{course.code}</Badge>
-                      <Badge variant="secondary" className="text-xs">{course.level}L</Badge>
-                    </div>
-                    <p className="font-semibold text-sm">{course.title}</p>
-                    <div className="flex items-center gap-4 mt-2 text-xs text-muted-foreground">
-                      <span className="flex items-center gap-1"><Users className="size-3" />{course.enrolled} students</span>
-                      <span className="flex items-center gap-1"><FileText className="size-3" />{course.assignments} assignments</span>
-                    </div>
-                  </div>
-                  <Button variant="ghost" size="sm" className="text-xs shrink-0">Manage</Button>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
+          <div className="flex flex-col items-center justify-center py-12 text-center border border-border rounded-xl">
+            <BookOpen className="size-8 text-muted-foreground opacity-30 mb-2" />
+            <p className="text-sm font-medium text-muted-foreground">No courses yet</p>
+            <p className="text-xs text-muted-foreground mt-1">Courses assigned to you will appear here</p>
+          </div>
         </div>
 
         <div className="space-y-4">
