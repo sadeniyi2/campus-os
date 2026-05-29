@@ -9,7 +9,7 @@ export function getGeminiClient(): GoogleGenerativeAI {
   return _genAI;
 }
 
-export function getModel(modelName = "gemini-1.5-flash") {
+export function getModel(modelName = process.env.GEMINI_MODEL ?? "gemini-2.0-flash-lite") {
   return getGeminiClient().getGenerativeModel({ model: modelName });
 }
 

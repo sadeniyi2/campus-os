@@ -37,12 +37,16 @@ export async function GET() {
   } else {
     try {
       const aiStart = Date.now();
-      const model = getModel();
-      await model.generateContent("Say OK");
-      checks.ai = { status: "ok", latencyMs: Date.now() - aiStart };
+      const modelName = process.env.GEMINI_MODEL ?? "gemini-2.0-flash-lite";
+      const model = getModel(modelName);
+      await model.generateContent("Reply with one word: OK");
+      checks.ai = { status: "ok", latencyMs: Date.now() - aiStart, message: `Gemini ${modelName}` };
     } catch (err) {
-      const msg = err instanceof Error ? err.message : "AI call failed";
-      checks.ai = { status: "degraded", message: msg.slice(0, 120) };
+      const raw = err instanceof Error ? err.message : "AI call failed";
+      const hint = raw.includes("Error fetching")
+        ? `Model unavailable — set GEMINI_MODEL env var to a valid model (e.g. gemini-2.0-flash-lite). Raw: ${raw.slice(0, 80)}`
+        : raw.slice(0, 120);
+      checks.ai = { status: "degraded", message: hint };
     }
   }
 
