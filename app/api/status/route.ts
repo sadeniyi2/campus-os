@@ -37,7 +37,7 @@ export async function GET() {
   } else {
     try {
       const aiStart = Date.now();
-      const modelName = process.env.GEMINI_MODEL ?? "gemini-1.5-flash";
+      const modelName = process.env.GEMINI_MODEL ?? "gemini-2.0-flash";
       const model = getModel(modelName);
       await model.generateContent("Reply with one word: OK");
       checks.ai = { status: "ok", latencyMs: Date.now() - aiStart, message: `Gemini ${modelName}` };
