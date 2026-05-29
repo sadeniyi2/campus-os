@@ -1,5 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { openai } from "@/lib/openai/client";
+import { getModel } from "@/lib/gemini/client";
 
 export async function POST(request: NextRequest) {
   try {
@@ -25,17 +25,9 @@ Create a comprehensive yet concise summary that includes:
 Content to summarize:
 ${text}`;
 
-    const response = await openai.chat.completions.create({
-      model: "gpt-4o",
-      messages: [
-        { role: "system", content: "You are an expert academic summarizer for university-level content. Create structured, clear summaries using markdown formatting." },
-        { role: "user", content: prompt },
-      ],
-      max_tokens: 1500,
-      temperature: 0.5,
-    });
-
-    const summary = response.choices[0]?.message?.content ?? "";
+    const model = getModel();
+    const result = await model.generateContent(prompt);
+    const summary = result.response.text();
     return NextResponse.json({ data: { summary } });
   } catch (error) {
     console.error("POST /api/ai/summarize error:", error);

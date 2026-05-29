@@ -25,7 +25,7 @@ export default function AIAssistantPage() {
         <div>
           <h1 className="text-2xl font-bold tracking-tight">AI Study Assistant</h1>
           <p className="text-sm text-muted-foreground mt-1">
-            Powered by GPT-4o — your intelligent academic companion
+            Powered by Gemini — your intelligent academic companion
           </p>
         </div>
       </div>

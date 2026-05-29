@@ -1,5 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { openai } from "@/lib/openai/client";
+import { getModel } from "@/lib/gemini/client";
 import type { QuizQuestion } from "@/types";
 
 export async function POST(request: NextRequest) {
@@ -33,22 +33,14 @@ Requirements:
 - Questions should be appropriate for university level
 - Return ONLY the JSON array, no other text`;
 
-    const response = await openai.chat.completions.create({
-      model: "gpt-4o",
-      messages: [
-        { role: "system", content: "You are an expert educator who creates high-quality multiple choice questions for university students. Always return valid JSON." },
-        { role: "user", content: prompt },
-      ],
-      max_tokens: 2000,
-      temperature: 0.6,
-      response_format: { type: "json_object" },
-    });
+    const model = getModel();
+    const result = await model.generateContent(prompt);
+    const content = result.response.text().trim();
+    const jsonText = content.replace(/^```json\s*/i, "").replace(/^```\s*/i, "").replace(/\s*```$/, "").trim();
 
-    const content = response.choices[0]?.message?.content ?? "{}";
     let questions: QuizQuestion[];
-
     try {
-      const parsed = JSON.parse(content);
+      const parsed = JSON.parse(jsonText);
       questions = Array.isArray(parsed) ? parsed : parsed.questions ?? [];
     } catch {
       return NextResponse.json({ error: "Failed to parse quiz response" }, { status: 500 });

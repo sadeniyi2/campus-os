@@ -53,7 +53,7 @@ function Hero() {
       <div className="relative page-container py-32 text-center z-10">
         <div className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-4 py-1.5 text-sm text-primary font-medium mb-8">
           <Sparkles className="size-3.5" />
-          Now with GPT-4o AI Study Assistant
+          Now with Gemini AI Study Assistant
           <ChevronRight className="size-3.5" />
         </div>
 
@@ -225,7 +225,7 @@ function Solution() {
             { icon: MapPin, title: "Smart Attendance", desc: "GPS-verified attendance via GeoMark integration. No more fake sign-ins.", color: "from-violet-500 to-indigo-600" },
             { icon: Calendar, title: "Digital Timetables", desc: "Upload once, access everywhere. PDF, image, and document support.", color: "from-blue-500 to-cyan-600" },
             { icon: Award, title: "Digital Clearance", desc: "5-module digital clearance with QR certificates and real-time tracking.", color: "from-emerald-500 to-teal-600" },
-            { icon: Sparkles, title: "AI Study Assistant", desc: "GPT-4o powered assistant for quizzes, flashcards, and study plans.", color: "from-pink-500 to-rose-600" },
+            { icon: Sparkles, title: "AI Study Assistant", desc: "Gemini powered assistant for quizzes, flashcards, and study plans.", color: "from-pink-500 to-rose-600" },
             { icon: Bell, title: "Announcements", desc: "Twitter-style announcement feed with reactions, comments and real-time updates.", color: "from-amber-500 to-orange-600" },
             { icon: BarChart2, title: "Academic Analytics", desc: "CGPA tracking, performance insights, and exam eligibility status.", color: "from-purple-500 to-violet-600" },
           ].map((feature) => {
@@ -309,7 +309,7 @@ function AISection() {
               <span className="gradient-text">CampusAI</span>
             </h2>
             <p className="text-muted-foreground text-lg leading-relaxed mb-8">
-              Powered by GPT-4o, CampusAI understands your courses and helps you study more effectively than ever before.
+              Powered by Gemini, CampusAI understands your courses and helps you study more effectively than ever before.
             </p>
             <div className="space-y-4">
               {[

@@ -176,7 +176,7 @@ export function AIChat() {
             <p className="text-sm font-semibold">CampusAI</p>
             <p className="text-xs text-muted-foreground flex items-center gap-1">
               <span className="size-1.5 rounded-full bg-emerald-500 inline-block" />
-              Powered by GPT-4o
+              Powered by Gemini
             </p>
           </div>
         </div>

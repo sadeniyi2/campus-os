@@ -120,7 +120,7 @@ export default function StudentDashboard() {
                 </div>
                 <div>
                   <p className="font-semibold text-sm">AI Study Assistant</p>
-                  <p className="text-xs text-muted-foreground">Powered by GPT-4o</p>
+                  <p className="text-xs text-muted-foreground">Powered by Gemini</p>
                 </div>
               </div>
               <p className="text-xs text-muted-foreground mb-3">
