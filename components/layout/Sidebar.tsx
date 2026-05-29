@@ -88,6 +88,12 @@ export function Sidebar() {
     : role === "ADMIN" || role === "SUPER_ADMIN" ? NAV_ITEMS_ADMIN
     : NAV_ITEMS_STUDENT;
 
+  const settingsHref =
+    role === "LECTURER" ? "/lecturer/settings"
+    : role === "COURSE_REP" ? "/course-rep/settings"
+    : role === "ADMIN" || role === "SUPER_ADMIN" ? "/admin/settings"
+    : "/student/settings";
+
   return (
     <motion.aside
       animate={{ width: sidebarCollapsed ? 68 : 240 }}
@@ -123,7 +129,7 @@ export function Sidebar() {
       {/* User Profile */}
       <div className="px-2 pb-4 pt-2 border-t border-border space-y-1 shrink-0">
         <Link
-          href="/settings"
+          href={settingsHref}
           className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-muted-foreground hover:bg-accent hover:text-foreground transition-colors"
         >
           <Settings className="size-4 shrink-0" />

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Sparkles, CheckCircle, XCircle, RotateCcw, Trophy } from "lucide-react";
+import { Sparkles, CheckCircle, XCircle, RotateCcw, Trophy, AlertCircle } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -11,30 +11,6 @@ import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import type { QuizQuestion } from "@/types";
 
-const SAMPLE_QUIZ: QuizQuestion[] = [
-  {
-    id: "1",
-    question: "What is the time complexity of binary search?",
-    options: ["O(n)", "O(log n)", "O(n²)", "O(1)"],
-    correctIndex: 1,
-    explanation: "Binary search divides the search space in half at each step, resulting in O(log n) time complexity.",
-  },
-  {
-    id: "2",
-    question: "Which data structure uses LIFO order?",
-    options: ["Queue", "Linked List", "Stack", "Tree"],
-    correctIndex: 2,
-    explanation: "A Stack follows Last-In-First-Out (LIFO) order where the last element added is the first to be removed.",
-  },
-  {
-    id: "3",
-    question: "What does CPU stand for?",
-    options: ["Central Processing Unit", "Core Programming Unit", "Computer Processing Utility", "Central Program Unit"],
-    correctIndex: 0,
-    explanation: "CPU stands for Central Processing Unit — the primary component of a computer that executes instructions.",
-  },
-];
-
 export function QuizGenerator() {
   const [topic, setTopic] = useState("");
   const [numQuestions, setNumQuestions] = useState("5");
@@ -43,16 +19,29 @@ export function QuizGenerator() {
   const [submitted, setSubmitted] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
   const [currentQuestion, setCurrentQuestion] = useState(0);
+  const [error, setError] = useState<string | null>(null);
 
   const generateQuiz = async () => {
     if (!topic.trim()) return;
     setIsGenerating(true);
-    await new Promise((r) => setTimeout(r, 1500));
-    setQuiz(SAMPLE_QUIZ);
-    setAnswers({});
-    setSubmitted(false);
-    setCurrentQuestion(0);
-    setIsGenerating(false);
+    setError(null);
+    try {
+      const res = await fetch("/api/ai/quiz", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ topic, numQuestions: parseInt(numQuestions), difficulty: "medium" }),
+      });
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.error ?? "Failed to generate quiz");
+      setQuiz(json.data as QuizQuestion[]);
+      setAnswers({});
+      setSubmitted(false);
+      setCurrentQuestion(0);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Something went wrong");
+    } finally {
+      setIsGenerating(false);
+    }
   };
 
   const score = quiz
@@ -216,6 +205,12 @@ export function QuizGenerator() {
             ))}
           </div>
         </div>
+        {error && (
+          <div className="flex items-start gap-2 p-3 rounded-lg bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400">
+            <AlertCircle className="size-4 shrink-0 mt-0.5" />
+            <p className="text-xs">{error}</p>
+          </div>
+        )}
         <Button
           variant="gradient"
           className="w-full gap-2"

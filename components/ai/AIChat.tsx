@@ -105,7 +105,10 @@ export function AIChat() {
         }),
       });
 
-      if (!response.ok) throw new Error("Failed to get response");
+      if (!response.ok) {
+        const errBody = await response.json().catch(() => ({}));
+        throw new Error(errBody.error ?? `Server error ${response.status}`);
+      }
 
       const reader = response.body?.getReader();
       const decoder = new TextDecoder();
@@ -142,13 +145,16 @@ export function AIChat() {
           }
         }
       }
-    } catch {
+    } catch (err) {
+      const isApiError = err instanceof Error && err.message !== "Failed to get response";
       setMessages((prev) => [
         ...prev,
         {
           id: (Date.now() + 1).toString(),
           role: "assistant",
-          content: "I apologize, I'm having trouble connecting right now. Please check your internet connection and try again.",
+          content: isApiError
+            ? `Error: ${(err as Error).message}`
+            : "The AI service is temporarily unavailable. This usually means the GEMINI_API_KEY environment variable is missing or invalid. Please contact your administrator.",
           createdAt: new Date().toISOString(),
         },
       ]);

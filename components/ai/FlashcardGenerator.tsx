@@ -1,20 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { Sparkles, ChevronLeft, ChevronRight, RotateCcw, ThumbsUp, ThumbsDown } from "lucide-react";
+import { Sparkles, ChevronLeft, ChevronRight, RotateCcw, ThumbsUp, ThumbsDown, AlertCircle } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type { Flashcard } from "@/types";
-
-const SAMPLE_CARDS: Flashcard[] = [
-  { id: "1", front: "What is a Binary Search Tree?", back: "A BST is a tree data structure where each node has at most two children, and for each node, all values in the left subtree are smaller and all values in the right subtree are larger.", known: false },
-  { id: "2", front: "Define Big-O notation", back: "Big-O notation describes the upper bound of an algorithm's time or space complexity, representing the worst-case scenario as input size grows towards infinity.", known: false },
-  { id: "3", front: "What is polymorphism in OOP?", back: "Polymorphism allows objects of different classes to be treated as objects of a common superclass. It enables the same interface to be used for different underlying forms (data types).", known: false },
-  { id: "4", front: "Explain TCP vs UDP", back: "TCP (Transmission Control Protocol) is connection-oriented, reliable, and ordered. UDP (User Datagram Protocol) is connectionless, faster but unreliable. TCP guarantees delivery; UDP prioritizes speed.", known: false },
-];
 
 export function FlashcardGenerator() {
   const [topic, setTopic] = useState("");
@@ -23,15 +16,28 @@ export function FlashcardGenerator() {
   const [flipped, setFlipped] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
   const [direction, setDirection] = useState(1);
+  const [error, setError] = useState<string | null>(null);
 
   const generate = async () => {
     if (!topic.trim()) return;
     setIsGenerating(true);
-    await new Promise((r) => setTimeout(r, 1200));
-    setCards(SAMPLE_CARDS.map((c) => ({ ...c, known: false })));
-    setCurrent(0);
-    setFlipped(false);
-    setIsGenerating(false);
+    setError(null);
+    try {
+      const res = await fetch("/api/ai/flashcards", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ topic, numCards: 8 }),
+      });
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.error ?? "Failed to generate flashcards");
+      setCards((json.data as Flashcard[]).map((c) => ({ ...c, known: false })));
+      setCurrent(0);
+      setFlipped(false);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Something went wrong");
+    } finally {
+      setIsGenerating(false);
+    }
   };
 
   const navigate = (dir: number) => {
@@ -65,6 +71,12 @@ export function FlashcardGenerator() {
               onChange={(e) => setTopic(e.target.value)}
             />
           </div>
+          {error && (
+            <div className="flex items-start gap-2 p-3 rounded-lg bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400">
+              <AlertCircle className="size-4 shrink-0 mt-0.5" />
+              <p className="text-xs">{error}</p>
+            </div>
+          )}
           <Button
             variant="gradient"
             className="w-full gap-2"
