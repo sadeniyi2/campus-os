@@ -3,8 +3,8 @@
 import Link from "next/link";
 import {
   GraduationCap, MapPin, Sparkles, Calendar, Award, Bell,
-  CheckCircle, ArrowRight, ExternalLink, Star, Users, Building2,
-  Activity, BookOpen, Shield, Zap, Globe, ChevronRight,
+  CheckCircle, ArrowRight, ExternalLink, Users,
+  Activity, BookOpen, Zap, ChevronRight,
   BarChart2, FileText, Brain,
 } from "lucide-react";
 import { GEOMARK_URL } from "@/lib/constants";
@@ -23,7 +23,10 @@ function Navbar() {
         <nav className="hidden md:flex items-center gap-6 text-sm font-medium text-muted-foreground">
           <a href="#features" className="hover:text-foreground transition-colors">Features</a>
           <a href="#ai" className="hover:text-foreground transition-colors">AI Tools</a>
-          <a href="#pricing" className="hover:text-foreground transition-colors">Pricing</a>
+          <Link href="/status" className="hover:text-foreground transition-colors flex items-center gap-1.5">
+            <span className="size-1.5 rounded-full bg-emerald-500 inline-block" />
+            Status
+          </Link>
           <a href="#about" className="hover:text-foreground transition-colors">About</a>
         </nav>
 
@@ -370,145 +373,6 @@ function AISection() {
   );
 }
 
-function ClearanceSection() {
-  return (
-    <section className="py-24">
-      <div className="page-container">
-        <div className="text-center mb-16">
-          <p className="text-primary text-sm font-semibold uppercase tracking-wider mb-3">Digital Clearance</p>
-          <h2 className="text-4xl font-bold tracking-tight mb-4">From 5 days to 5 minutes</h2>
-          <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-            Replace paper stampings with a digital workflow. Track all clearance modules in real-time from your phone.
-          </p>
-        </div>
-        <div className="flex flex-col sm:flex-row items-start justify-center gap-4">
-          {["Bursary", "Library", "Medical", "Hostel", "Department"].map((module, i) => (
-            <div key={module} className="flex flex-col items-center">
-              <div className={`flex items-center justify-center size-14 rounded-2xl border-2 font-bold text-lg ${i < 2 ? "border-emerald-500 bg-emerald-50 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-400" : "border-muted bg-muted/50 text-muted-foreground"}`}>
-                {i < 2 ? <CheckCircle className="size-6 text-emerald-500" /> : <span className="text-2xl">{["💰", "📚", "🏥", "🏠", "🎓"][i]}</span>}
-              </div>
-              <p className="text-sm font-medium mt-2">{module}</p>
-              <p className="text-xs text-muted-foreground">{i < 2 ? "Approved" : "Pending"}</p>
-              {i < 4 && (
-                <div className="hidden sm:block absolute h-0.5 w-8 bg-border translate-x-20 mt-7" />
-              )}
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function Testimonials() {
-  return (
-    <section className="py-24 bg-muted/20">
-      <div className="page-container">
-        <div className="text-center mb-16">
-          <h2 className="text-4xl font-bold tracking-tight mb-4">Loved by students & staff</h2>
-          <p className="text-muted-foreground text-lg">Hear from universities already using CampusOS</p>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {[
-            { name: "Adebayo Okonkwo", role: "300L Computer Science, UNILAG", quote: "CampusOS completely changed how I manage my academics. The AI study assistant helped me ace my Data Structures exam with custom quizzes.", avatar: "AO" },
-            { name: "Dr. Amaka Nwosu", role: "Lecturer, University of Ibadan", quote: "Posting announcements and managing assignments has never been easier. My students always stay informed, and attendance tracking is seamless.", avatar: "AN" },
-            { name: "Ibrahim Musa", role: "Admin, ABU Zaria", quote: "We reduced clearance processing time from a week to under 24 hours. The digital workflow is transparent and our students love it.", avatar: "IM" },
-          ].map((t) => (
-            <div key={t.name} className="bg-card border border-border rounded-2xl p-6">
-              <div className="flex gap-1 mb-4">
-                {Array.from({ length: 5 }).map((_, i) => (
-                  <Star key={i} className="size-4 text-amber-500 fill-current" />
-                ))}
-              </div>
-              <p className="text-sm text-muted-foreground leading-relaxed mb-5 italic">&ldquo;{t.quote}&rdquo;</p>
-              <div className="flex items-center gap-3">
-                <div className="flex items-center justify-center size-9 rounded-full bg-gradient-to-br from-violet-600 to-indigo-600 text-white text-sm font-bold">
-                  {t.avatar}
-                </div>
-                <div>
-                  <p className="text-sm font-semibold">{t.name}</p>
-                  <p className="text-xs text-muted-foreground">{t.role}</p>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function Pricing() {
-  const plans = [
-    {
-      name: "Starter",
-      price: { monthly: "$0", yearly: "$0" },
-      desc: "Perfect for small departments",
-      features: ["Up to 500 students", "Basic announcements", "Timetable uploads", "Email support"],
-      cta: "Get Started Free",
-      highlighted: false,
-    },
-    {
-      name: "Pro",
-      price: { monthly: "$49", yearly: "$39" },
-      desc: "Full platform for growing universities",
-      features: ["Up to 5,000 students", "AI Study Assistant", "GeoMark integration", "Clearance workflows", "Analytics dashboard", "Priority support"],
-      cta: "Start Free Trial",
-      highlighted: true,
-    },
-    {
-      name: "Enterprise",
-      price: { monthly: "Custom", yearly: "Custom" },
-      desc: "For large institutions",
-      features: ["Unlimited students", "Custom integrations", "SSO & LDAP", "Dedicated support", "SLA guarantee", "White-label option"],
-      cta: "Contact Sales",
-      highlighted: false,
-    },
-  ];
-
-  return (
-    <section id="pricing" className="py-24">
-      <div className="page-container">
-        <div className="text-center mb-16">
-          <p className="text-primary text-sm font-semibold uppercase tracking-wider mb-3">Pricing</p>
-          <h2 className="text-4xl font-bold tracking-tight mb-4">Simple, transparent pricing</h2>
-          <p className="text-muted-foreground text-lg">Start free, scale as you grow</p>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
-          {plans.map((plan) => (
-            <div
-              key={plan.name}
-              className={`rounded-2xl border p-6 relative ${plan.highlighted ? "border-primary bg-gradient-to-b from-primary/5 to-background shadow-lg shadow-primary/10" : "border-border bg-card"}`}
-            >
-              {plan.highlighted && (
-                <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 rounded-full bg-primary px-4 py-1 text-xs text-primary-foreground font-semibold">
-                  Most Popular
-                </div>
-              )}
-              <p className="font-bold text-lg mb-1">{plan.name}</p>
-              <p className="text-3xl font-bold mb-1">{plan.price.monthly}</p>
-              <p className="text-muted-foreground text-sm mb-5">{plan.desc}</p>
-              <ul className="space-y-2.5 mb-6">
-                {plan.features.map((f) => (
-                  <li key={f} className="flex items-center gap-2 text-sm">
-                    <CheckCircle className="size-4 text-primary shrink-0" />
-                    {f}
-                  </li>
-                ))}
-              </ul>
-              <Link
-                href="/register"
-                className={`block text-center rounded-xl py-2.5 text-sm font-semibold transition-all ${plan.highlighted ? "bg-gradient-to-r from-violet-600 to-indigo-600 text-white hover:from-violet-500 hover:to-indigo-500" : "border border-border hover:bg-accent"}`}
-              >
-                {plan.cta}
-              </Link>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
 
 function CTA() {
   return (
@@ -558,18 +422,42 @@ function Footer() {
             </p>
           </div>
           {[
-            { heading: "Product", links: ["Features", "Pricing", "AI Tools", "GeoMark Integration"] },
-            { heading: "University", links: ["Students", "Lecturers", "Administrators", "Course Reps"] },
-            { heading: "Company", links: ["About", "Blog", "Careers", "Contact"] },
+            {
+              heading: "Product",
+              links: [
+                { label: "Features", href: "#features" },
+                { label: "AI Tools", href: "#ai" },
+                { label: "GeoMark Integration", href: "#" },
+                { label: "System Status", href: "/status" },
+              ],
+            },
+            {
+              heading: "University",
+              links: [
+                { label: "Students", href: "/register" },
+                { label: "Lecturers", href: "/register" },
+                { label: "Administrators", href: "/register" },
+                { label: "Course Reps", href: "/register" },
+              ],
+            },
+            {
+              heading: "Legal",
+              links: [
+                { label: "Privacy Policy", href: "/privacy" },
+                { label: "Terms of Service", href: "/terms" },
+                { label: "Security", href: "/security" },
+                { label: "Contact", href: "mailto:hello@campus-os.com" },
+              ],
+            },
           ].map((col) => (
             <div key={col.heading}>
               <p className="font-semibold text-sm mb-3">{col.heading}</p>
               <ul className="space-y-2">
                 {col.links.map((link) => (
-                  <li key={link}>
-                    <a href="#" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-                      {link}
-                    </a>
+                  <li key={link.label}>
+                    <Link href={link.href} className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+                      {link.label}
+                    </Link>
                   </li>
                 ))}
               </ul>
@@ -579,9 +467,13 @@ function Footer() {
         <div className="border-t border-border mt-12 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-sm text-muted-foreground">© 2025 CampusOS. All rights reserved.</p>
           <div className="flex items-center gap-4">
-            <a href="#" className="text-sm text-muted-foreground hover:text-foreground">Privacy</a>
-            <a href="#" className="text-sm text-muted-foreground hover:text-foreground">Terms</a>
-            <a href="#" className="text-sm text-muted-foreground hover:text-foreground">Security</a>
+            <Link href="/privacy" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Privacy</Link>
+            <Link href="/terms" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Terms</Link>
+            <Link href="/security" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Security</Link>
+            <Link href="/status" className="text-sm text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1">
+              <span className="size-1.5 rounded-full bg-emerald-500 inline-block" />
+              Status
+            </Link>
           </div>
         </div>
       </div>
@@ -599,9 +491,6 @@ export default function LandingPage() {
       <Solution />
       <GeoMarkSection />
       <AISection />
-      <ClearanceSection />
-      <Testimonials />
-      <Pricing />
       <CTA />
       <Footer />
     </div>
