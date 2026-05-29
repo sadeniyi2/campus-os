@@ -59,7 +59,8 @@ export async function POST(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error("POST /api/ai/chat error:", error);
-    return NextResponse.json({ error: "AI service unavailable" }, { status: 500 });
+    const msg = error instanceof Error ? error.message : "AI service unavailable";
+    console.error("POST /api/ai/chat error:", msg);
+    return NextResponse.json({ error: msg }, { status: 500 });
   }
 }

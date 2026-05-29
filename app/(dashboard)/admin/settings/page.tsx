@@ -1,20 +1,17 @@
 "use client";
 
 import { useState } from "react";
-import { User, Bell, Shield, Palette, Moon, Sun, Monitor, Building2, Globe } from "lucide-react";
+import { Bell, Shield, Palette, Moon, Sun, Monitor, Building2 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import { useAuthStore } from "@/store/useAuthStore";
+import { ProfileSettings } from "@/components/settings/ProfileSettings";
 import { useUIStore } from "@/store/useUIStore";
 
 export default function AdminSettingsPage() {
-  const { user } = useAuthStore();
   const { theme, setTheme } = useUIStore();
-  const [name, setName] = useState(user?.name ?? "");
-  const [email] = useState(user?.email ?? "");
   const [universityName, setUniversityName] = useState("");
   const [universityDomain, setUniversityDomain] = useState("");
   const [notifications, setNotifications] = useState({
@@ -23,12 +20,6 @@ export default function AdminSettingsPage() {
     clearanceRequests: true,
     auditLogs: false,
   });
-  const [saved, setSaved] = useState(false);
-
-  const handleSave = () => {
-    setSaved(true);
-    setTimeout(() => setSaved(false), 2000);
-  };
 
   return (
     <div className="space-y-6 animate-fade-in max-w-2xl">
@@ -37,27 +28,7 @@ export default function AdminSettingsPage() {
         <p className="text-sm text-muted-foreground mt-1">Manage platform and administrator settings</p>
       </div>
 
-      {/* Admin Profile */}
-      <Card>
-        <CardHeader className="pb-3">
-          <CardTitle className="text-sm font-semibold flex items-center gap-2">
-            <User className="size-4" /> Administrator Profile
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="space-y-2">
-            <Label>Full Name</Label>
-            <Input value={name} onChange={(e) => setName(e.target.value)} placeholder="Your full name" />
-          </div>
-          <div className="space-y-2">
-            <Label>Email Address</Label>
-            <Input value={email} disabled className="opacity-60 cursor-not-allowed" />
-          </div>
-          <Button onClick={handleSave} size="sm" variant={saved ? "outline" : "default"}>
-            {saved ? "Saved!" : "Save Changes"}
-          </Button>
-        </CardContent>
-      </Card>
+      <ProfileSettings />
 
       {/* University Settings */}
       <Card>
@@ -79,7 +50,7 @@ export default function AdminSettingsPage() {
             </div>
             <p className="text-xs text-muted-foreground">Students signing up with this domain get verified automatically</p>
           </div>
-          <Button onClick={handleSave} size="sm">Save University Config</Button>
+          <Button size="sm">Save University Config</Button>
         </CardContent>
       </Card>
 

@@ -1,32 +1,21 @@
 "use client";
 
 import { useState } from "react";
-import { User, Bell, Shield, Palette, Moon, Sun, Monitor } from "lucide-react";
+import { Bell, Shield, Palette, Moon, Sun, Monitor } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import { useAuthStore } from "@/store/useAuthStore";
+import { ProfileSettings } from "@/components/settings/ProfileSettings";
 import { useUIStore } from "@/store/useUIStore";
 
 export default function StudentSettingsPage() {
-  const { user } = useAuthStore();
   const { theme, setTheme } = useUIStore();
-  const [name, setName] = useState(user?.name ?? "");
-  const [email] = useState(user?.email ?? "");
   const [notifications, setNotifications] = useState({
     announcements: true,
     assignments: true,
     attendance: false,
     grades: true,
   });
-  const [saved, setSaved] = useState(false);
-
-  const handleSave = () => {
-    setSaved(true);
-    setTimeout(() => setSaved(false), 2000);
-  };
 
   return (
     <div className="space-y-6 animate-fade-in max-w-2xl">
@@ -35,32 +24,7 @@ export default function StudentSettingsPage() {
         <p className="text-sm text-muted-foreground mt-1">Manage your account preferences</p>
       </div>
 
-      {/* Profile */}
-      <Card>
-        <CardHeader className="pb-3">
-          <CardTitle className="text-sm font-semibold flex items-center gap-2">
-            <User className="size-4" /> Profile Information
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="space-y-2">
-            <Label>Full Name</Label>
-            <Input value={name} onChange={(e) => setName(e.target.value)} placeholder="Your full name" />
-          </div>
-          <div className="space-y-2">
-            <Label>Email Address</Label>
-            <Input value={email} disabled className="opacity-60 cursor-not-allowed" />
-            <p className="text-xs text-muted-foreground">Email cannot be changed here. Contact your administrator.</p>
-          </div>
-          <div className="space-y-2">
-            <Label>Role</Label>
-            <Input value="Student" disabled className="opacity-60 cursor-not-allowed" />
-          </div>
-          <Button onClick={handleSave} size="sm" variant={saved ? "outline" : "default"}>
-            {saved ? "Saved!" : "Save Changes"}
-          </Button>
-        </CardContent>
-      </Card>
+      <ProfileSettings />
 
       {/* Appearance */}
       <Card>

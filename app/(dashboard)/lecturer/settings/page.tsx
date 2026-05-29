@@ -1,20 +1,17 @@
 "use client";
 
 import { useState } from "react";
-import { User, Bell, Shield, Palette, Moon, Sun, Monitor, BookOpen } from "lucide-react";
+import { Bell, Shield, Palette, Moon, Sun, Monitor } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import { useAuthStore } from "@/store/useAuthStore";
+import { ProfileSettings } from "@/components/settings/ProfileSettings";
 import { useUIStore } from "@/store/useUIStore";
 
 export default function LecturerSettingsPage() {
-  const { user } = useAuthStore();
   const { theme, setTheme } = useUIStore();
-  const [name, setName] = useState(user?.name ?? "");
-  const [email] = useState(user?.email ?? "");
   const [officeHours, setOfficeHours] = useState("");
   const [department, setDepartment] = useState("");
   const [notifications, setNotifications] = useState({
@@ -23,12 +20,19 @@ export default function LecturerSettingsPage() {
     messages: true,
     system: false,
   });
-  const [saved, setSaved] = useState(false);
 
-  const handleSave = () => {
-    setSaved(true);
-    setTimeout(() => setSaved(false), 2000);
-  };
+  const extraFields = (
+    <div className="grid grid-cols-2 gap-4">
+      <div className="space-y-2">
+        <Label>Department</Label>
+        <Input value={department} onChange={(e) => setDepartment(e.target.value)} placeholder="e.g. Computer Science" />
+      </div>
+      <div className="space-y-2">
+        <Label>Office Hours</Label>
+        <Input value={officeHours} onChange={(e) => setOfficeHours(e.target.value)} placeholder="e.g. Mon-Wed 2-4pm" />
+      </div>
+    </div>
+  );
 
   return (
     <div className="space-y-6 animate-fade-in max-w-2xl">
@@ -37,37 +41,7 @@ export default function LecturerSettingsPage() {
         <p className="text-sm text-muted-foreground mt-1">Manage your lecturer profile and preferences</p>
       </div>
 
-      {/* Profile */}
-      <Card>
-        <CardHeader className="pb-3">
-          <CardTitle className="text-sm font-semibold flex items-center gap-2">
-            <User className="size-4" /> Profile Information
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="space-y-2">
-            <Label>Full Name</Label>
-            <Input value={name} onChange={(e) => setName(e.target.value)} placeholder="Your full name" />
-          </div>
-          <div className="space-y-2">
-            <Label>Email Address</Label>
-            <Input value={email} disabled className="opacity-60 cursor-not-allowed" />
-          </div>
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label>Department</Label>
-              <Input value={department} onChange={(e) => setDepartment(e.target.value)} placeholder="e.g. Computer Science" />
-            </div>
-            <div className="space-y-2">
-              <Label>Office Hours</Label>
-              <Input value={officeHours} onChange={(e) => setOfficeHours(e.target.value)} placeholder="e.g. Mon-Wed 2-4pm" />
-            </div>
-          </div>
-          <Button onClick={handleSave} size="sm" variant={saved ? "outline" : "default"}>
-            {saved ? "Saved!" : "Save Changes"}
-          </Button>
-        </CardContent>
-      </Card>
+      <ProfileSettings extraFields={extraFields} />
 
       {/* Appearance */}
       <Card>

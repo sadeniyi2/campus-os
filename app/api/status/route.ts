@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma/client";
+import { getModel } from "@/lib/gemini/client";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -13,14 +14,24 @@ export async function GET() {
     const dbStart = Date.now();
     await prisma.$queryRaw`SELECT 1`;
     checks.database = { status: "ok", latencyMs: Date.now() - dbStart };
-  } catch (err) {
+  } catch {
     checks.database = { status: "down", message: "Cannot reach database" };
   }
 
-  // AI service check
-  checks.ai = process.env.GEMINI_API_KEY
-    ? { status: "ok" }
-    : { status: "degraded", message: "GEMINI_API_KEY not configured" };
+  // AI service check — actually test a live Gemini call
+  if (!process.env.GEMINI_API_KEY) {
+    checks.ai = { status: "degraded", message: "GEMINI_API_KEY not configured" };
+  } else {
+    try {
+      const aiStart = Date.now();
+      const model = getModel();
+      await model.generateContent("Say OK");
+      checks.ai = { status: "ok", latencyMs: Date.now() - aiStart };
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "AI call failed";
+      checks.ai = { status: "degraded", message: msg.slice(0, 120) };
+    }
+  }
 
   // Attendance integration check
   checks.geomark = { status: "ok", message: "External service" };

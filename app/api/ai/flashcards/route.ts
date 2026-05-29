@@ -49,7 +49,8 @@ Requirements:
 
     return NextResponse.json({ data: cards });
   } catch (error) {
-    console.error("POST /api/ai/flashcards error:", error);
-    return NextResponse.json({ error: "Failed to generate flashcards" }, { status: 500 });
+    const msg = error instanceof Error ? error.message : "Failed to generate flashcards";
+    console.error("POST /api/ai/flashcards error:", msg);
+    return NextResponse.json({ error: msg }, { status: 500 });
   }
 }

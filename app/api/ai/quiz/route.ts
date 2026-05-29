@@ -48,7 +48,8 @@ Requirements:
 
     return NextResponse.json({ data: questions });
   } catch (error) {
-    console.error("POST /api/ai/quiz error:", error);
-    return NextResponse.json({ error: "Failed to generate quiz" }, { status: 500 });
+    const msg = error instanceof Error ? error.message : "Failed to generate quiz";
+    console.error("POST /api/ai/quiz error:", msg);
+    return NextResponse.json({ error: msg }, { status: 500 });
   }
 }
